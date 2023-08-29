@@ -90,6 +90,18 @@ html, body, div, span, applet, object, iframe,
     cursor: pointer;
     font-family: 'SUITE-Regular', sans-serif;
   }
+
+  main {
+    max-width: 1024px;
+    margin: 0 auto;
+  }
+
+  .inner {
+		position: relative;
+		max-width: 1024px;
+		height: 100%;
+		margin: auto;
+  }
 `;
 
 export default GlobalStyles;
