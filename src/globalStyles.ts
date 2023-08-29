@@ -1,4 +1,4 @@
-import { createGlobalStyle } from 'styled-components'
+import { createGlobalStyle } from 'styled-components';
 
 const GlobalStyles = createGlobalStyle`
 
@@ -90,6 +90,6 @@ html, body, div, span, applet, object, iframe,
     cursor: pointer;
     font-family: 'SUITE-Regular', sans-serif;
   }
-`
+`;
 
-export default GlobalStyles
+export default GlobalStyles;
