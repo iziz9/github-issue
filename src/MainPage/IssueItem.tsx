@@ -18,7 +18,7 @@ const IssueItem = ({ issue }: { issue: ResponseIssueDataType }) => {
 					<div
 						className="issue-title"
 						onClick={() => {
-							location.pathname.includes('detail') ? navigate('/detail/' + issue.number, { state: issue }) : null;
+							location.pathname.includes('detail') ? null : navigate('/detail/' + issue.number, { state: issue });
 						}}
 					>
 						{issue.title}
