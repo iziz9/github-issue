@@ -1,6 +1,10 @@
+import { useLocation, useParams } from 'react-router-dom';
 import { styled } from 'styled-components';
 
 const DetailPage = () => {
+	const { issueId } = useParams();
+	console.log(issueId);
+
 	return (
 		<main>
 			<TitleSection>

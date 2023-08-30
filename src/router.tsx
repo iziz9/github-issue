@@ -12,7 +12,11 @@ const router = createBrowserRouter([
 		element: <App />,
 		errorElement: <ErrorPage />,
 		children: [
-			{ index: true, path: '/', element: <MainPage /> },
+			{
+				index: true,
+				path: '/',
+				element: <MainPage />,
+			},
 			{
 				path: '/detail/:issueId',
 				element: (
