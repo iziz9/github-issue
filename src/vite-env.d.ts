@@ -2,7 +2,9 @@
 
 type RequestArgsType = {
 	issues?: string;
-	issueNumber?: number | '';
+	state?: string;
+	issueNumber?: string | '';
+	sort?: string;
 };
 
 type ResponseIssueDataType = {
@@ -18,4 +20,14 @@ interface IUser {
 	avatar_url: string;
 	id: number;
 	login: string; // 이름
+}
+
+interface IIssueDetail {
+	body: string;
+	comments: number;
+	created_at: string;
+	state: string;
+	number: number;
+	user: { login: string; avatar_url: string };
+	title: string;
 }

@@ -9,10 +9,17 @@ const MainPage = () => {
 
 	useEffect(() => {
 		const requestGetIssues = async () => {
-			const { data }: { data: ResponseIssueDataType[] } = await getGithubResponse({ issues: '/issues' });
-			setIssueList([...data].sort((a, b) => b.comments - a.comments));
+			try {
+				const { data }: { data: ResponseIssueDataType[] } = await getGithubResponse({
+					issues: '/issues',
+					state: 'open',
+					sort: 'comments',
+				});
+				setIssueList(data);
+			} catch (err) {
+				alert(err);
+			}
 		};
-
 		requestGetIssues();
 	}, []);
 
@@ -20,10 +27,10 @@ const MainPage = () => {
 		<main>
 			<IssueListContainer>
 				{issueList.map((issue, index) => (
-					<>
-						<IssueItem issue={issue} key={issue.id} />
-						{(index + 1) % 4 === 0 && <AdBannder key={'banner' + issue.id} />}
-					</>
+					<li key={issue.id}>
+						<IssueItem issue={issue} />
+						{(index + 1) % 4 === 0 && <AdBannder />}
+					</li>
 				))}
 			</IssueListContainer>
 		</main>

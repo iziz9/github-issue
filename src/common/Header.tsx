@@ -4,7 +4,7 @@ import { getGithubResponse } from '../api/request';
 import { useEffect, useState } from 'react';
 
 const Header = () => {
-	const [repoName, setRepoName] = useState<string>(''); //비동기 함수 실행을 위해 useEffect사용하여 state로 넣어줌
+	const [repoName, setRepoName] = useState<string>('');
 	useEffect(() => {
 		const requestGetRepoName = async () => {
 			const { data } = await getGithubResponse({});

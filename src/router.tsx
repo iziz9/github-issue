@@ -18,7 +18,7 @@ const router = createBrowserRouter([
 				element: <MainPage />,
 			},
 			{
-				path: '/detail/:issueId',
+				path: '/detail/:issueNumber',
 				element: (
 					<Suspense fallback={<Spinner />}>
 						<DetailPage />

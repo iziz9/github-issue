@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { styled } from 'styled-components';
 
 const IssueItem = ({ issue }: { issue: ResponseIssueDataType }) => {
+	//issue data context로 저장해서 detail에서 같이 사용하기?
 	const navigate = useNavigate();
 	const createdData = new Date(issue.created_at).toLocaleDateString('ko-KR', {
 		year: 'numeric',
@@ -10,10 +11,10 @@ const IssueItem = ({ issue }: { issue: ResponseIssueDataType }) => {
 	});
 	return (
 		<IssueItemContainer>
-			<IssueInfoSection>
+			<section className="issue-info-section">
 				<div className="about-issue">
 					<div className="issue-number">{'#' + issue.number}</div>
-					<div className="issue-title" onClick={() => navigate('/detail/' + issue.id)}>
+					<div className="issue-title" onClick={() => navigate('/detail/' + issue.number)}>
 						{issue.title}
 					</div>
 				</div>
@@ -24,62 +25,66 @@ const IssueItem = ({ issue }: { issue: ResponseIssueDataType }) => {
 					</div>
 					<div className="issue-date">{createdData}</div>
 				</div>
-			</IssueInfoSection>
-			<CommentSection>
+			</section>
+			<section className="issue-comments-section">
 				<span>코멘트</span>
 				<span>{issue.comments}</span>
-			</CommentSection>
+			</section>
 		</IssueItemContainer>
 	);
 };
 
-const IssueItemContainer = styled.li`
+export const IssueItemContainer = styled.div`
+	position: relative;
+	width: 100%;
 	display: flex;
 	justify-content: space-between;
 	padding: 10px 20px;
 	border-bottom: 1px solid #d3d3d3;
-`;
+	margin: auto;
 
-const IssueInfoSection = styled.section`
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
-
-	.about-issue {
+	.issue-info-section {
 		display: flex;
-		flex-direction: row;
-		gap: 12px;
+		flex-direction: column;
+		gap: 10px;
 
-		.issue-number {
-			font-weight: 700;
-			color: darkgreen;
-		}
-		.issue-title {
-			font-weight: 700;
-			cursor: pointer;
-		}
-	}
-	.about-record {
-		display: flex;
-		flex-direction: row;
-		gap: 12px;
-		color: #707070;
-
-		.issue-user {
+		.about-issue {
 			display: flex;
 			flex-direction: row;
-			gap: 5px;
+			gap: 12px;
+
+			.issue-number {
+				font-weight: 700;
+				color: darkgreen;
+			}
+			.issue-title {
+				font-weight: 700;
+				cursor: pointer;
+				white-space: break-spaces;
+			}
+		}
+		.about-record {
+			display: flex;
+			flex-direction: row;
+			gap: 12px;
+			color: #707070;
+
+			.issue-user {
+				display: flex;
+				flex-direction: row;
+				gap: 5px;
+			}
 		}
 	}
-`;
 
-const CommentSection = styled.section`
-	width: 80px;
-	margin: auto 0;
-	display: flex;
-	text-align: center;
-	gap: 5px;
-	color: #707070;
+	.issue-comments-section {
+		width: 80px;
+		margin: auto 0;
+		display: flex;
+		text-align: center;
+		gap: 5px;
+		color: #707070;
+	}
 `;
 
 export default IssueItem;

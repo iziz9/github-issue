@@ -12,7 +12,7 @@ const AdBannder = () => {
 		</BannerContainer>
 	);
 };
-const BannerContainer = styled.li`
+const BannerContainer = styled.div`
 	position: relative;
 	width: 100%;
 	height: 100%;
