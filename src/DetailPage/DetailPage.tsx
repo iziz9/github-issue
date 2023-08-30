@@ -1,18 +1,19 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { styled } from 'styled-components';
 import { getGithubResponse } from '../api/request';
-import { ReactMarkdown } from 'react-markdown/lib/react-markdown';
-import { IssueItemContainer } from '../mainPage/IssueItem';
+import IssueItem from '../mainPage/IssueItem';
+import MDEditor from '@uiw/react-md-editor';
 
 const DetailPage = () => {
-	const { issueNumber } = useParams();
+	const location = useLocation();
+	const issueInfo = location.state as ResponseIssueDataType;
 	const [issueData, setIssueData] = useState<IIssueDetail>();
 
 	useEffect(() => {
 		const requestGetIssueDetail = async () => {
 			try {
-				const { data } = await getGithubResponse({ issues: '/issues', issueNumber: '/' + issueNumber });
+				const { data } = await getGithubResponse({ issues: '/issues', issueNumber: '/' + issueInfo.number });
 				console.log(data);
 				setIssueData(data);
 			} catch (err) {
@@ -20,7 +21,7 @@ const DetailPage = () => {
 			}
 		};
 		requestGetIssueDetail();
-	}, [issueNumber]);
+	}, [issueInfo.number]);
 
 	return (
 		<>
@@ -30,22 +31,10 @@ const DetailPage = () => {
 						<div className="profile">
 							<img src={issueData.user.avatar_url} alt={'프로필이미지'} />
 						</div>
-						<IssueItemContainer>
-							<div className="issue-info-section">
-								<div className="about-issue">
-									<div>{'#' + issueData.number}</div>
-									<div>{issueData.title}</div>
-								</div>
-								<div className="about-record">
-									<div>{issueData.user.login}</div>
-									<div>{issueData.created_at}</div>
-								</div>
-							</div>
-							<div>{issueData.comments}</div>
-						</IssueItemContainer>
+						<IssueItem issue={issueInfo} />
 					</TitleSection>
-					<ContentSection>
-						<ReactMarkdown>{issueData.body}</ReactMarkdown>
+					<ContentSection data-color-mode="light">
+						<MDEditor.Markdown style={{ padding: 10 }} source={issueData.body} />
 					</ContentSection>
 				</main>
 			)}
