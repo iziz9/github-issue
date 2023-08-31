@@ -1,7 +1,7 @@
 import { Octokit } from 'octokit';
 
-const owner = 'facebook';
-const repo = 'react';
+export const owner = 'facebook';
+export const repo = 'react';
 
 const octokit = new Octokit({
 	auth: import.meta.env.VITE_ACCESS_TOKEN,

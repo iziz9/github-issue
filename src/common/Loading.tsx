@@ -4,16 +4,17 @@ import { styled } from 'styled-components';
 const Loading = () => {
 	return (
 		<LoadingContainer>
-			<PulseLoader color="#6b8e23" />
+			<PulseLoader color="#6b8e23" size={38} />
 		</LoadingContainer>
 	);
 };
 
 const LoadingContainer = styled.div`
-	position: relative;
+	position: absolute;
+	z-index: 100;
 	width: 100%;
 	text-align: center;
-	padding: 20px 0;
+	margin: 20px 0;
 `;
 
 export default Loading;

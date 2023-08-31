@@ -1,25 +1,14 @@
 import { useNavigate } from 'react-router-dom';
 import { styled } from 'styled-components';
-import { getGithubResponse } from '../api/request';
-import { useEffect, useState } from 'react';
+import { owner, repo } from '../api/request';
 
 const Header = () => {
-	const [repoName, setRepoName] = useState<string>('');
-	useEffect(() => {
-		const requestGetRepoName = async () => {
-			const { data } = await getGithubResponse({});
-			setRepoName(data.full_name);
-			return data.full_name;
-		};
-		requestGetRepoName();
-	}, []);
-
 	const navigate = useNavigate();
 	return (
 		<HeaderContainer>
 			<div className="inner">
 				<div className="title" onClick={() => navigate('/')}>
-					{repoName}
+					{owner + '/' + repo}
 				</div>
 			</div>
 		</HeaderContainer>

@@ -17,7 +17,6 @@ const DetailPage = () => {
 			setIsLoading(true);
 			try {
 				const { data } = await getGithubResponse({ issues: '/issues', issueNumber: '/' + issueInfo.number });
-				console.log(data);
 				setIssueData(data);
 			} catch (err) {
 				alert(err);

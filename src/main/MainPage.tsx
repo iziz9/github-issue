@@ -12,18 +12,6 @@ const MainPage = () => {
 	const [isLastPage, setIsLastPage] = useState<boolean>(false); //더이상 페이지가 없으면 요청을 하지 않도록
 	const observeRef = useRef<any>();
 
-	const ElementRef = (node: HTMLDivElement) => {
-		if (observeRef.current) observeRef.current.disconnect();
-		// 최근 observer를 갖기위해 이전 observer disconnect
-		observeRef.current = new IntersectionObserver(([entry]) => {
-			// entries는 아래 설명참조
-			if (entry.isIntersecting) {
-				setPage((prev) => prev + 1);
-			}
-		});
-		if (node) observeRef.current.observe(node); // 노드가 있으면 observer.current를 observe
-	};
-
 	useEffect(() => {
 		const requestGetIssues = async () => {
 			setIsLoading(true);
@@ -43,8 +31,27 @@ const MainPage = () => {
 			}
 		};
 
-		requestGetIssues();
-	}, [page]);
+		isLastPage ? null : requestGetIssues();
+	}, [page, isLastPage]);
+
+	const observerCallback = (entries: any, observer: any) => {
+		console.log(entries);
+		if (entries[0].isIntersecting) {
+			setPage((prev) => prev + 1);
+			observer.unobserve(entries[0].target);
+		}
+	};
+
+	useEffect(() => {
+		const observer = new IntersectionObserver(observerCallback, { threshold: 0.3 });
+		if (observeRef.current) {
+			observer.observe(observeRef.current);
+		}
+
+		return () => {
+			observer.disconnect();
+		};
+	}, [issueList]);
 
 	return (
 		<main>
@@ -53,11 +60,11 @@ const MainPage = () => {
 					<li key={issue.id}>
 						<IssueItem issue={issue} />
 						{(index + 1) % 4 === 0 && <AdBannder />}
-						{/* <div ref={observeRef}>sdf</div> */}
+						{index === issueList.length - 1 && <div ref={observeRef}></div>}
 					</li>
 				))}
 			</IssueListContainer>
-			{isLoading ? <Loading /> : !isLastPage && <div ref={ElementRef}></div>}
+			{isLoading && <Loading />}
 		</main>
 	);
 };
