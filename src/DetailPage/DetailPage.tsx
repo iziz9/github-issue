@@ -4,20 +4,25 @@ import { styled } from 'styled-components';
 import { getGithubResponse } from '../api/request';
 import IssueItem from '../mainPage/IssueItem';
 import MDEditor from '@uiw/react-md-editor';
+import Loading from '../common/Loading';
 
 const DetailPage = () => {
 	const location = useLocation();
 	const issueInfo = location.state as ResponseIssueDataType;
 	const [issueData, setIssueData] = useState<IIssueDetail>();
+	const [isLoading, setIsLoading] = useState<boolean>(false);
 
 	useEffect(() => {
 		const requestGetIssueDetail = async () => {
+			setIsLoading(true);
 			try {
 				const { data } = await getGithubResponse({ issues: '/issues', issueNumber: '/' + issueInfo.number });
 				console.log(data);
 				setIssueData(data);
 			} catch (err) {
 				alert(err);
+			} finally {
+				setIsLoading(false);
 			}
 		};
 		requestGetIssueDetail();
@@ -25,6 +30,7 @@ const DetailPage = () => {
 
 	return (
 		<>
+			{isLoading && <Loading />}
 			{issueData && (
 				<main>
 					<TitleSection>
