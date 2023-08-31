@@ -35,7 +35,6 @@ const MainPage = () => {
 	}, [page, isLastPage]);
 
 	const observerCallback = (entries: any, observer: any) => {
-		console.log(entries);
 		if (entries[0].isIntersecting) {
 			setPage((prev) => prev + 1);
 			observer.unobserve(entries[0].target);

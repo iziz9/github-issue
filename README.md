@@ -170,8 +170,46 @@ return (
 ### 무한스크롤
 
 ```js
-// 2페이지 이상 불러와지지 않는 문제가 있어 해결중입니다.
+	useEffect(() => {
+		const requestGetIssues = async () => {
+			setIsLoading(true);
+			try {
+				const { data }: { data: ResponseIssueDataType[] } = await getGithubResponse({
+					issues: '/issues',
+					state: 'open',
+					sort: 'comments',
+					page,
+				});
+				page === 1 ? setIssueList(data) : setIssueList((prev) => [...prev, ...data]);
+				if (data.length < 10) setIsLastPage(true);
+			} catch (err) {
+				alert(err);
+			} finally {
+				setIsLoading(false);
+			}
+		};
+
+		isLastPage ? null : requestGetIssues();
+	}, [page, isLastPage]);
+
+	const observerCallback = (entries: any, observer: any) => {
+		if (entries[0].isIntersecting) {
+			setPage((prev) => prev + 1);
+			observer.unobserve(entries[0].target);
+		}
+	};
+
+	useEffect(() => {
+		const observer = new IntersectionObserver(observerCallback, { threshold: 0.3 });
+		if (observeRef.current) {
+			observer.observe(observeRef.current);
+		}
+
+		return () => {
+			observer.disconnect();
+		};
+	}, [issueList]);
 
 ```
-
-- 
+- 한 번의 요청으로 불러오는 데이터는 10개로 설정했습니다.
+- api를 요청하는 request함수 내에서 응답 값이 10개 미만일 때 lastPage 상태를 true로 설정하여  스크롤을 내려도 다음 요청이 들어가지 않도록 합니다.
