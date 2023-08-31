@@ -19,4 +19,11 @@ module.exports = {
     ],
     '@typescript-eslint/no-explicit-any': 'off'
   },
+  settings: {
+    "import/resolver": {
+      "node": {
+        "extensions": [".ts", ".tsx"]
+      }
+    }
+  }
 }
