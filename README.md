@@ -102,161 +102,76 @@ export const getGithubResponse = async ({
 - api response를 기다리는 동안 로딩 아이콘을 띄우기 위해 request함수가 실행될 때 로딩중인지를 나타내는 상태를 true로 설정하고, 응답이 돌아오면 (성공이든 실패든) finally 구문에서 false로 변경합니다.
 - setIsLoading 상태가 true일 경우 아이콘이 표시됩니다.
 
+
 ### 에러 화면 구현
 
 ```js
-// todoItem 컴포넌트
- const [content, setContent] = useState('')
-  const [isModifying, setIsModifying] = useState(false)
-
-  useEffect(() => {
-    setContent(itemData.todo || '')
-  }, [itemData])
-
-  const handleContentUpdate = async () => {
-    await requestUpdateTodo({
-      id: itemData.id,
-      todo: content,
-      userId: itemData.userId,
-      isCompleted: itemData.isCompleted,
-    })
-    setIsModifying(false)
-    await getTodoData()
-  }
-
-  const handleDelete = async () => {
-    await requestDeleteTodo(itemData.id)
-    await getTodoData()
-  }
-
-  const handleCheckComplete = async (e) => {
-    await requestUpdateTodo({
-      id: itemData.id,
-      todo: content,
-      userId: itemData.userId,
-      isCompleted: e.target.checked,
-    })
-    await getTodoData()
-  }
-
-  return ( ...)
-
-```
-
-- Todo 페이지 / Todo list / Todo Item 컴포넌트로 구성되어 있습니다.
-- 1. Todo 페이지 컴포넌트에서는 get api로 저장된 전체 리스트를 받고, 새로운 할 일을 추가할 수 있습니다.
-- 2. Todo list 컴포넌트에서는 할 일 목록이 존재할 경우 todoItem 컴포넌트의 props로 각각의 할 일을 전달해줍니다.
-- 3. Todo Item 컴포넌트에서는 전달받은 하나의 할 일 내용을 출력하고, 수정/삭제할 수 있습니다.
-- 4. 할 일을 수정, 삭제한 후 화면에 변경된 상태를 반영하기 위해 api로 할일 목록을 다시 불러옵니다.
-
-### 라우터 설정
-
-```js
-// private route - 1 (로그인 완료 상태)
-export const MembersRoute = ({ children }) => {
-  if (!localStorage.getItem('accessToken')) {
-    alert('로그인 후 이용 가능합니다.')
-    return <Navigate to="/signin" replace={true} />
-  }
-  return children
-}
-// private route - 2 (로그인 하지 않은 상태)
-export const NonMembersRoute = ({ children }) => {
-  if (localStorage.getItem('accessToken')) {
-    return <Navigate to="/todo" replace={true} />
-  }
-  return children
-}
-
-// 라우터 설정
+// router.tsx
 const router = createBrowserRouter([
-  {
-    path: '/',
-    element: <App />,
-    errorElement: <Error />,
-    children: [
-      { index: true, path: '/', element: <Main /> },
-      {
-        path: '/signin',
-        element: (
-          <NonMembersRoute>
-            <SignIn />
-          </NonMembersRoute>
-        ),
-      },
-      {
-        path: '/signup',
-        element: (
-          <NonMembersRoute>
-            <SignUp />
-          </NonMembersRoute>
-        ),
-      },
-      {
-        path: '/todo',
-        element: (
-          <MembersRoute>
-            <Todo />
-          </MembersRoute>
-        ),
-      },
-    ],
-  },
-])
+	{
+		path: '/',
+		element: <App />,
+		errorElement: <ErrorPage />,
+		children: [
+			{
+				index: true,
+				path: '/',
+				element: <MainPage />,
+			},
+			{
+				path: '/detail/:issueNumber',
+				element: <DetailPage />,
+			},
+		],
+	},
+]);
 ```
 
-- 지정 조건 충족시에만 경로에 접근할 수 있도록 private route 를 만들어 요소를 감싸주었습니다.
-- 이번 과제에서 로그인/비로그인 사용자 양 쪽이 모두 접근할 수 있는 경로는 '/' 뿐이었기 때문에, 페이지별 접근 가능한 사용자를 router.js파일에서 바로 유추할 수 있도록 private route를 로그인 상태에 따라 두개로 나눴습니다. (Members, NonMembers)
+- 라우터의 errorElement 속성을 이용해 지정되지 않은 path에 접근하거나 통신 오류가 발생했을 때 에러 컴포넌트를 보여줍니다.
 
-### fetch
+
+### 이슈 아이템 컴포넌트 재사용
 
 ```js
-// fetch instance
-const fetchInstance = async ({ path, method, data = '', auth = '', id = '' }) => {
-  try {
-    const res = await fetch(baseURL + path + id, {
-      method: method,
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: auth,
-      },
-      body: data || null,
-    })
-
-    if (method === 'DELETE' && res.status === 204) {
-      return 204
-    }
-
-    if (!res.ok) {
-      const failResult = await res.json()
-      alert(failResult.message)
-      return false
-    }
-
-    if (method === 'GET' || path === '/auth/signin') {
-      return await res.json()
-    }
-
-    return true
-  } catch (err) {
-    alert('에러가 발생했습니다. 잠시 후 다시 시도해주세요.')
-  }
-}
-
-// request
-export const requestUpdateTodo = async ({ id, todo, isCompleted }) => {
-  const auth = 'Bearer ' + localStorage.getItem('accessToken')
-  const res = await fetchInstance({
-    path: '/todos/',
-    id,
-    method: 'PUT',
-    data: JSON.stringify({ todo, isCompleted }),
-    auth,
-  })
-
-  res && alert('할 일 수정이 완료되었습니다.')
-  return res
-}
+const location = useLocation();
+const issueInfo = location.state as ResponseIssueDataType;
+return (
+    <main>
+      <TitleSection>
+        <div className="profile">
+          <img src={issueData.user.avatar_url} alt={'프로필이미지'} />
+        </div>
+        <IssueItem issue={issueInfo} />
+      </TitleSection>
+      <ContentSection data-color-mode="light">
+        <MDEditor.Markdown style={{ padding: 10 }} source={issueData.body} />
+      </ContentSection>
+    </main>
+)
 ```
 
-- request.js 파일에 fetch instance를 만들어 api호출 시 실행할 기본 동작들을 지정하고, crud 기능별로 나눈 request 함수에서 instance를 호출하여 그 결과에 따라 에러 발생을 알리거나 값을 리턴합니다.
+- 이슈 리스트의 아이템(하나의 이슈 정보)과 상세페이지의 타이틀 부분 와이어프레임이 프로필사진이 추가된 것을 제외하고는 동일했기 때문에 재사용하였습니다.
+- 재사용 과정에서 이슈 정보에 들어가야 할 데이터는 메인페이지에서 상세페이지로 넘어올 때 useNavigate의 두 번째 인자로 전달한 state를 그대로 사용했습니다.
+
+### 광고 이미지 출력
+
+```js
+{issueList.map((issue, index) => (
+  <li key={issue.id}>
+    <IssueItem issue={issue} />
+    {(index + 1) % 4 === 0 && <AdBannder />}
+  </li>
+))}
+
+```
+
+- api로 받아온 데이터를 반복문으로 IssueItem 컴포넌트로 넣어주며 지정된 인덱스에 해당할 경우 광고 이미지를 출력하도록 작성했습니다.
+
+### 무한스크롤
+
+```js
+// 2페이지 이상 불러와지지 않는 문제가 있어 해결중입니다.
+
+```
+
+- 
