@@ -24,24 +24,25 @@ const MainPage = () => {
 		if (node) observeRef.current.observe(node); // 노드가 있으면 observer.current를 observe
 	};
 
-	const requestGetIssues = async () => {
-		setIsLoading(true);
-		try {
-			const { data }: { data: ResponseIssueDataType[] } = await getGithubResponse({
-				issues: '/issues',
-				state: 'open',
-				sort: 'comments',
-				page,
-			});
-			page === 1 ? setIssueList(data) : setIssueList((prev) => [...prev, ...data]);
-			if (data.length < 10) setIsLastPage(true);
-		} catch (err) {
-			alert(err);
-		} finally {
-			setIsLoading(false);
-		}
-	};
 	useEffect(() => {
+		const requestGetIssues = async () => {
+			setIsLoading(true);
+			try {
+				const { data }: { data: ResponseIssueDataType[] } = await getGithubResponse({
+					issues: '/issues',
+					state: 'open',
+					sort: 'comments',
+					page,
+				});
+				page === 1 ? setIssueList(data) : setIssueList((prev) => [...prev, ...data]);
+				if (data.length < 10) setIsLastPage(true);
+			} catch (err) {
+				alert(err);
+			} finally {
+				setIsLoading(false);
+			}
+		};
+
 		requestGetIssues();
 	}, [page]);
 
