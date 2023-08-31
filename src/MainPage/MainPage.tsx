@@ -10,7 +10,7 @@ const MainPage = () => {
 	const [page, setPage] = useState<number>(1);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [isLastPage, setIsLastPage] = useState<boolean>(false); //더이상 페이지가 없으면 요청을 하지 않도록
-	const observeRef = useRef<HTMLDivElement>();
+	const observeRef = useRef<any>();
 
 	const ElementRef = (node: HTMLDivElement) => {
 		if (observeRef.current) observeRef.current.disconnect();
