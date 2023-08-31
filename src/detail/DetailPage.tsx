@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { styled } from 'styled-components';
 import { getGithubResponse } from '../api/request';
-import IssueItem from '../MainPage/IssueItem';
+import IssueItem from '../main/IssueItem';
 import MDEditor from '@uiw/react-md-editor';
 import Loading from '../common/Loading';
 
