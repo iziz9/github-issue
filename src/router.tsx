@@ -3,8 +3,6 @@ import App from './App';
 import ErrorPage from './errorPage/ErrorPage';
 import MainPage from './mainPage/MainPage';
 import DetailPage from './detailPage/DetailPage';
-import { Suspense } from 'react';
-import Spinner from './common/Spinner';
 
 const router = createBrowserRouter([
 	{
@@ -19,11 +17,7 @@ const router = createBrowserRouter([
 			},
 			{
 				path: '/detail/:issueNumber',
-				element: (
-					<Suspense fallback={<Spinner />}>
-						<DetailPage />
-					</Suspense>
-				),
+				element: <DetailPage />,
 			},
 		],
 	},

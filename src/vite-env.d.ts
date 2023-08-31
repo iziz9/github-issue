@@ -5,6 +5,8 @@ type RequestArgsType = {
 	state?: string;
 	issueNumber?: string | '';
 	sort?: string;
+	per_page?: number;
+	page?: number;
 };
 
 type ResponseIssueDataType = {
